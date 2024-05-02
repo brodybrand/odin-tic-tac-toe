@@ -32,7 +32,14 @@ function GameBoard() {
         console.log(boardWithCellValues.slice(6, 9));
     }
 
-    return {getBoard, placeMarker, printBoard, takenCell}
+    const clearBoard = () => {
+        for (cell in board) {
+            board[cell].clearCell();
+        }
+    }
+
+
+    return {getBoard, placeMarker, printBoard, takenCell, clearBoard}
 }
 
 function Cell() {
@@ -44,7 +51,11 @@ function Cell() {
 
     const getValue = () => value;
 
-    return {addMarker, getValue}
+    const clearCell = () => {
+        value = 0;
+    }
+
+    return {addMarker, getValue, clearCell}
 }
 
 
@@ -64,6 +75,8 @@ function GameController(
             marker: 2
         }
     ];
+
+    let status = 0
 
     let activePlayer = players[0];
 
@@ -90,12 +103,13 @@ function GameController(
                     [2, 4, 6]
         ];
 
-        let gameStatus = 0;
-
         let currentBoard = board.getBoard();
         if ((currentBoard.filter((cell) => cell.getValue() === 0)).length === 0) {
             gameStatus = 2
             console.log('tie');
+            status = 1
+            printNewRound();
+            newGame();
             return;
         }
         for ( i=0 ; i < winConditions.length; i++) {
@@ -105,12 +119,20 @@ function GameController(
                     counter += 1
                     if (counter === 3) {
                         console.log(`${getActivePlayer().name} has won`)
-                        gameStatus = 1
+                        status = 0
+                        printNewRound();
+                        newGame();
                         return;
                     }
                 }
             }
         }
+    }
+
+
+    const newGame = () => {
+        board.clearBoard();
+        console.log('Game Reset')
     }
 
     const playRound = (cell) => {
