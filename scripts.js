@@ -86,8 +86,6 @@ function GameController(
         }
     ];
 
-    let status = 0
-
     let activePlayer = players[0];
 
     const switchActivePlayer = () => {
@@ -96,6 +94,9 @@ function GameController(
 
     const getActivePlayer = () => activePlayer;
 
+    const getInactivePlayer = () => {
+        return players.filter(player => player !== activePlayer)[0];
+    }
     const printNewRound = () => {
         board.printBoard();
         console.log(`${getActivePlayer().name}'s turn`)
@@ -113,32 +114,35 @@ function GameController(
                     [2, 4, 6]
         ];
 
+        let gameStatus = 0;
+
         let currentBoard = board.getBoard();
+
         if ((currentBoard.filter((cell) => cell.getValue() === 0)).length === 0) {
-            gameStatus = 2
             console.log('tie');
-            status = 1
-            printNewRound();
-            newGame();
-            return;
+            gameStatus = 1
         }
+
         for ( i=0 ; i < winConditions.length; i++) {
             let counter = 0
+
             for (j = 0; j < winConditions[i].length; j++) {
+
                 if (currentBoard[winConditions[i][j]].getValue() === getActivePlayer().marker) {
                     counter += 1
+                    
                     if (counter === 3) {
-                        console.log(`${getActivePlayer().name} has won`)
-                        status = 0
-                        printNewRound();
-                        newGame();
-                        return;
-                    }
+                        gameStatus = 1;
+                        // break;
+                        // gameStatus = 1
+                        // printNewRound();
+                        // newGame();
+                    }    
                 }
             }
         }
+        return gameStatus;
     }
-
 
     const newGame = () => {
         board.clearBoard();
@@ -157,19 +161,19 @@ function GameController(
         board.placeMarker(cell, getActivePlayer().marker)
         
         checkGameStatus();
+        console.log(checkGameStatus());
+        if (checkGameStatus() === 1) {
+            console.log('gameover')
+            return gameStatus = 1;
+        }
         switchActivePlayer();
         printNewRound();
     }
-    return {playRound, getActivePlayer, switchActivePlayer, checkGameStatus, newGame}
+    return {playRound, getActivePlayer, switchActivePlayer, checkGameStatus, newGame, getInactivePlayer}
 }
 
 const displayController = () => {
     const cells = document.querySelectorAll('.cell')
-    const idConvert = {
-                    'zero': 0, 'one': 1, 'two': 2,
-                    'three': 3, 'four': 4, 'five': 5,
-                    'six': 6, 'seven': 7, 'eight': 8
-                }
 
     const clearDisplay = () => {
         cells.forEach((cell) => {
@@ -181,9 +185,23 @@ const displayController = () => {
         cells.forEach((cell, id) => {
             cell.addEventListener('click', () => {
                 choice = id;
-                console.log(choice);
-                cell.textContent = (game.getActivePlayer().marker);
-                game.playRound(choice);
+                
+                let op = game.getInactivePlayer();
+                console.log(`Opponent: ${op.name}`)
+
+                if (cell.textContent === op.marker) {
+                    console.log('op taken')
+                    alert('spot taken')
+                    game.playRound(choice);
+                } 
+                
+                else {
+                    cell.textContent = (game.getActivePlayer().marker);
+                    game.playRound(choice);
+                    if (game.checkGameStatus() === 1) {
+                        alert('game over');
+                    }
+                }
             })
         })
     }
@@ -194,7 +212,6 @@ const displayController = () => {
         console.log('reset-btn clicked')
         game.newGame();
         clearDisplay();
-        getCellChoice();
     })
 
 
