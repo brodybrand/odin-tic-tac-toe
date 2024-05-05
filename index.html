@@ -12,7 +12,51 @@
         <div class="btns">
             <button type="button" id="reset-btn">Reset</button>
         </div>
-        <div class="wrapper" id="board">
+        <div class='player' id="player-one">
+            <div class="name-display">Player One</div>
+            <dialog id="player-one-dialog">
+                <form method="dialog">
+                    <p id="form-header">Customize Menu</p>
+                    <p id="name-wrapper">
+                        <label for="name">Name:</label>
+                        <input type="text" name="name" id="name" maxlength="10">
+                     </p>
+                     <p id="marker-wrap">
+                        <label for="marker">Marker:</label>
+                        <select name="marker" id="marker">
+                            <option value="X">X</option>
+                            <option value="O">O</option>
+                        </select>
+                    </p>
+                    <button id="cancel" type="reset">Cancel</button>
+                    <button id="confirm" type="submit">Confirm</button>
+                </form>
+              </dialog>
+              <button id="update">Update User</button>
+        </div>
+        <div class='player' id="player-two">
+            <div class="name-display">Player Two</div>
+            <dialog id="player-two-dialog">
+                <form method="dialog">
+                    <p id="form-header">Customize Menu</p>
+                    <p id="name-wrapper">
+                        <label for="name">Name:</label>
+                        <input type="text" name="name" id="name" maxlength="10" placeholder="Player Two">
+                    </p>
+                    <p id="marker-wrap">
+                        <label for="marker">Marker:</label>
+                        <select name="marker" id="marker">
+                            <option value="X">X</option>
+                            <option value="O">O</option>
+                        </select>
+                    </p>
+                     <button id="cancel" type="reset">Cancel</button>
+                     <button id="submit" type="submit">Confirm</button>
+                </form>
+              </dialog>
+              <button id="update">Update User</button>
+        </div>
+        <div id="board">
             <div class="row" id="row1">
                 <div class="cell" id-="zero">0</div>
                 <div class="cell" id-="one">1</div>
