@@ -77,12 +77,14 @@ function GameController(
 
     const players = [
         {
+            id: 1,
             name: playerOneName,
-            marker: 'X'
+            marker: '',
         },
         {
+            id: 2,
             name: playerTwoName,
-            marker: 'O'
+            marker: ''
         }
     ];
 
@@ -169,10 +171,13 @@ function GameController(
         switchActivePlayer();
         printNewRound();
     }
-    return {playRound, getActivePlayer, switchActivePlayer, checkGameStatus, newGame, getInactivePlayer}
+    return {playRound, getActivePlayer, switchActivePlayer,
+         checkGameStatus, newGame, getInactivePlayer, players}
 }
 
 const displayController = () => {
+    let game = GameController()
+
     const cells = document.querySelectorAll('.cell')
 
     const clearDisplay = () => {
@@ -202,18 +207,72 @@ const displayController = () => {
                         alert('game over');
                     }
                 }
+
             })
         })
     }
 
 
     let resetBtn = document.querySelector('#reset-btn');
-    resetBtn.addEventListener('click', async () => {
+    resetBtn.addEventListener('click', () => {
         console.log('reset-btn clicked')
         game.newGame();
         clearDisplay();
     })
 
+    let cancelBtns = document.querySelectorAll('#cancel')
+    let pOne = document.querySelector('#player-one')
+    let pTwo = document.querySelector('#player-two')
+
+    let playerOne = game.players.find(player  => player.id === 1);
+    let playerTwo = game.players.find(player => player.id === 2);
+
+    const markers = ['X', 'O'];
+
+
+    pOne.querySelector('#update').addEventListener('click', () => {
+        let dialog = pOne.querySelector('dialog');
+        console.log(dialog)
+        dialog.showModal();
+    })
+
+    pTwo.querySelector('#update').addEventListener('click', () => {
+        let dialog = pTwo.querySelector('dialog');
+        console.log(dialog)
+        dialog.showModal();
+    })
+
+
+    cancelBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            let dialog = btn.closest('dialog');
+            dialog.close();
+        })
+    })
+
+    pOne.querySelector('form').addEventListener('submit', () => {
+        let username = pOne.querySelector('#name').value;
+        let marker = pOne.querySelector('#marker').value;
+
+        playerOne.username = username;
+
+        if (marker !== playerTwo['marker']) {
+            playerOne['marker'] = marker;
+            playerTwo['marker'] = markers.filter(marker => marker !== playerOne['marker'][0])
+        } else console.log('marker taken')
+    })
+
+    pTwo.querySelector('form').addEventListener('submit', () => {
+        let username = pTwo.querySelector('#name').value
+        let marker = pTwo.querySelector('#marker').value;
+
+        playerTwo.username = username;
+        
+        if (marker !== playerOne['marker']) {
+            playerTwo['marker'] = marker;
+            playerOne['marker'] = markers.filter(marker => marker !== playerTwo['marker'][0])
+        } else console.log('marker taken')
+    })
 
     return {getCellChoice, clearDisplay}
 }
